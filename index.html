@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VIVISPA 身心溫度計</title>
+  <meta name="description" content="5 題測出妳現在最需要的療癒，取得 VIVISPA 身心溫度、課程推薦與居家照護建議。">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f4c45'/%3E%3Cpath d='M32 12c8 9 14 18 14 27 0 8-6 13-14 13s-14-5-14-13c0-9 6-18 14-27z' fill='%23f3c98b'/%3E%3Cpath d='M25 39c4 4 10 4 14 0' fill='none' stroke='%230f4c45' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17322f;
+      --muted: #647570;
+      --line: #d7e2da;
+      --paper: #fbfaf5;
+      --soft: #eff6f1;
+      --brand: #0f6b5f;
+      --brand-deep: #0f4c45;
+      --gold: #c9893f;
+      --rose: #b9656d;
+      --white: #ffffff;
+      --shadow: 0 18px 50px rgba(15, 76, 69, .14);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(201, 137, 63, .18), transparent 30%),
+        linear-gradient(135deg, #fbfaf5 0%, #edf5f0 52%, #f8f1eb 100%);
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+
+    button, input { font: inherit; }
+
+    .app {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 38px;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(340px, 1.1fr);
+      min-height: calc(100vh - 66px);
+      background: rgba(255, 255, 255, .78);
+      border: 1px solid rgba(215, 226, 218, .9);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .brand-panel {
+      position: relative;
+      padding: 42px;
+      background:
+        linear-gradient(150deg, rgba(15, 76, 69, .96), rgba(15, 107, 95, .9)),
+        linear-gradient(45deg, rgba(243, 201, 139, .24), transparent);
+      color: #fff9ef;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .brand-panel::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -100px auto;
+      width: 280px;
+      height: 280px;
+      border: 1px solid rgba(243, 201, 139, .38);
+      transform: rotate(24deg);
+      border-radius: 42px;
+    }
+
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      background: #f3c98b;
+      color: var(--brand-deep);
+      border-radius: 8px;
+      font-weight: 900;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(38px, 5vw, 68px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      font-size: 19px;
+      line-height: 1.8;
+      color: rgba(255, 249, 239, .88);
+      max-width: 520px;
+      margin: 20px 0 0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat {
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.1);
+      padding: 14px;
+      min-height: 86px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 22px;
+      color: #f3c98b;
+      margin-bottom: 4px;
+    }
+
+    .stat span {
+      font-size: 13px;
+      line-height: 1.45;
+      color: rgba(255, 249, 239, .78);
+    }
+
+    .quiz-panel {
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--gold);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(24px, 2.6vw, 34px);
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .progress-wrap {
+      min-width: 150px;
+      text-align: right;
+    }
+
+    .progress-label {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .progress {
+      width: 100%;
+      height: 8px;
+      background: #e6eee8;
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 20%;
+      background: linear-gradient(90deg, var(--brand), var(--gold));
+      transition: width .25s ease;
+    }
+
+    .question-card, .result-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.88);
+      padding: 26px;
+      box-shadow: 0 10px 28px rgba(23, 50, 47, .07);
+    }
+
+    .question-title {
+      margin: 0 0 20px;
+      font-size: 24px;
+      line-height: 1.45;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      align-items: center;
+      gap: 14px;
+      padding: 15px;
+      min-height: 74px;
+      border: 1px solid #dbe5de;
+      background: #fff;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+
+    .option:hover, .option:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--brand);
+      background: #f7fbf8;
+      box-shadow: 0 8px 22px rgba(15, 107, 95, .12);
+      outline: none;
+    }
+
+    .option.is-selected {
+      border-color: var(--brand);
+      background: #edf7f3;
+    }
+
+    .letter {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      background: var(--soft);
+      color: var(--brand-deep);
+      font-weight: 900;
+      border-radius: 50%;
+    }
+
+    .option.is-selected .letter {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .helper {
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      border: 0;
+      min-height: 48px;
+      padding: 0 18px;
+      background: var(--brand-deep);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn:hover, .btn:focus-visible {
+      background: var(--brand);
+      outline: 3px solid rgba(15, 107, 95, .18);
+    }
+
+    .btn.secondary {
+      color: var(--brand-deep);
+      background: #e8f2ec;
+    }
+
+    .btn.ghost {
+      color: var(--brand-deep);
+      background: transparent;
+      border: 1px solid var(--line);
+    }
+
+    .btn[disabled] {
+      opacity: .42;
+      cursor: not-allowed;
+    }
+
+    .result-card {
+      display: none;
+    }
+
+    .result-card.is-visible {
+      display: block;
+    }
+
+    .result-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 22px;
+    }
+
+    .type {
+      margin: 0 0 8px;
+      color: var(--gold);
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .temperature {
+      font-size: clamp(46px, 6vw, 76px);
+      line-height: .95;
+      font-weight: 900;
+      color: var(--brand-deep);
+      white-space: nowrap;
+    }
+
+    .result-summary {
+      font-size: 18px;
+      line-height: 1.75;
+      margin: 0 0 18px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 22px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .chips li {
+      padding: 8px 10px;
+      background: #f3f7f4;
+      border: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--brand-deep);
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini {
+      padding: 16px;
+      background: #fbfdfb;
+      border: 1px solid var(--line);
+      min-height: 132px;
+    }
+
+    .mini h3 {
+      margin: 0 0 8px;
+      color: var(--brand-deep);
+      font-size: 16px;
+    }
+
+    .mini p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .notice {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 900px) {
+      .app { width: min(100% - 20px, 680px); padding: 10px 0 24px; }
+      .shell { grid-template-columns: 1fr; min-height: 0; }
+      .brand-panel { padding: 26px; }
+      .stats { grid-template-columns: 1fr 1fr 1fr; }
+      .quiz-panel { padding: 22px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .progress-wrap { width: 100%; text-align: left; }
+    }
+
+    @media (max-width: 560px) {
+      .brand-panel, .quiz-panel { padding: 20px; }
+      .lead { font-size: 16px; }
+      .stats { grid-template-columns: 1fr; }
+      .stat { min-height: auto; }
+      .question-card, .result-card { padding: 18px; }
+      .question-title { font-size: 20px; }
+      .option { grid-template-columns: 36px 1fr; padding: 12px; min-height: 68px; }
+      .letter { width: 36px; height: 36px; }
+      .result-head { grid-template-columns: 1fr; }
+      .temperature { white-space: normal; }
+      .result-grid { grid-template-columns: 1fr; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="shell" aria-label="VIVISPA 身心溫度計檢測">
+      <aside class="brand-panel">
+        <div>
+          <div class="brand-mark"><span class="mark">V</span><span>VIVISPA</span></div>
+          <div style="margin-top: 54px;">
+            <h1>身心<br>溫度計</h1>
+            <p class="lead">5 題測出妳現在最需要的療癒。把模糊的疲憊感，轉成更清楚的身體訊號、課程方向與居家照護。</p>
+          </div>
+        </div>
+        <div class="stats" aria-label="檢測特色">
+          <div class="stat"><b>5 題</b><span>選項式檢測，約 1 分鐘完成</span></div>
+          <div class="stat"><b>5 型</b><span>壓力、循環、水腫、睡眠、情緒</span></div>
+          <div class="stat"><b>1 份</b><span>專屬課程與產品搭配建議</span></div>
+        </div>
+      </aside>
+
+      <section class="quiz-panel">
+        <div class="topbar">
+          <div>
+            <p class="eyebrow">VIVISPA Digital Healing Check</p>
+            <h2 id="panelTitle">妳的身體，現在幾度？</h2>
+          </div>
+          <div class="progress-wrap" id="progressWrap">
+            <div class="progress-label" id="progressLabel">第 1 / 5 題</div>
+            <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+          </div>
+        </div>
+
+        <article class="question-card" id="questionCard">
+          <h3 class="question-title" id="questionTitle"></h3>
+          <div class="options" id="options"></div>
+        </article>
+
+        <p class="helper" id="helperText">請依照最近一週最接近妳的狀態選擇。這不是醫療診斷，而是 VIVISPA 的美體 SPA 療癒狀態檢測。</p>
+
+        <div class="actions" id="quizActions">
+          <button class="btn ghost" type="button" id="prevBtn">← 上一題</button>
+          <button class="btn" type="button" id="nextBtn" disabled>下一題 →</button>
+        </div>
+
+        <article class="result-card" id="resultCard" aria-live="polite">
+          <div class="result-head">
+            <div>
+              <p class="type" id="resultType"></p>
+              <h2 id="resultTitle"></h2>
+            </div>
+            <div class="temperature" id="temperature"></div>
+          </div>
+          <p class="result-summary" id="summary"></p>
+          <ul class="chips" id="signals"></ul>
+          <div class="result-grid">
+            <div class="mini">
+              <h3>推薦療癒課程</h3>
+              <p id="course"></p>
+            </div>
+            <div class="mini">
+              <h3>產品搭配</h3>
+              <p id="products"></p>
+            </div>
+            <div class="mini">
+              <h3>今日居家照護</h3>
+              <p id="care"></p>
+            </div>
+            <div class="mini">
+              <h3>門店諮詢話題</h3>
+              <p id="consult"></p>
+            </div>
+          </div>
+          <div class="actions" style="margin-top: 20px;">
+            <a class="btn" id="reserveBtn" href="#" role="button"></a>
+            <button class="btn secondary" type="button" id="shareBtn">分享我的結果</button>
+            <button class="btn ghost" type="button" id="restartBtn">重新檢測</button>
+          </div>
+          <p class="notice">此結果提供日常保養與 SPA 課程諮詢參考；若有急性疼痛、疾病或特殊身體狀況，請先諮詢專業醫療人員。</p>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        title: "最近一週，妳最明顯的身體感受是？",
+        options: {
+          A: "肩頸緊、頭重、上背卡卡",
+          B: "手腳冰冷、身體不容易暖起來",
+          C: "下半身沉重、水腫、覺得循環慢",
+          D: "睡不好、醒來還是累",
+          E: "全身說不上來的疲憊，什麼都提不起勁"
+        }
+      },
+      {
+        title: "最近的心情比較像哪一種？",
+        options: {
+          A: "腦袋停不下來，容易緊繃",
+          B: "提不起勁，覺得能量偏低",
+          C: "覺得身體沉沉的，心情也悶悶的",
+          D: "很想休息，但很難真正放鬆",
+          E: "有點煩、有點累，想被好好照顧"
+        }
+      },
+      {
+        title: "妳最想改善的狀態是？",
+        options: {
+          A: "肩頸放鬆",
+          B: "身體變暖、循環變好",
+          C: "水腫變少、身體變輕",
+          D: "睡得更好",
+          E: "心情變穩、整個人有被充電的感覺"
+        }
+      },
+      {
+        title: "妳最近最常出現的生活狀態是？",
+        options: {
+          A: "久坐、滑手機、肩頸容易僵硬",
+          B: "吹冷氣多、手腳容易冰冷",
+          C: "外食重口味、喝水少、下半身沉重",
+          D: "晚睡、淺眠、醒來沒精神",
+          E: "工作忙、照顧別人多，很少留時間給自己"
+        }
+      },
+      {
+        title: "如果今天要安排一場療癒，妳最想要哪種感覺？",
+        options: {
+          A: "壓力被鬆開",
+          B: "身體暖起來",
+          C: "身體變輕盈",
+          D: "好好睡一覺",
+          E: "心被安撫，整個人被照顧"
+        }
+      }
+    ];
+
+    const results = {
+      A: {
+        name: "高壓緊繃型",
+        temp: "38.5°C",
+        type: "偏高壓",
+        summary: "妳的身體正在提醒妳，該把壓力鬆開了。肩頸、上背、頭部容易累積壓力，身體像一直開著待機模式。",
+        signals: ["肩頸緊", "上背卡", "腦袋停不下來"],
+        course: "肩頸深層舒壓課程",
+        products: "舒緩型精油、肩頸放鬆油、舒壓香氛噴霧。",
+        care: "下班後用溫熱毛巾敷肩頸 3 分鐘，再做 5 次慢慢吐氣的肩膀放鬆。",
+        consult: "可以和美容師討論肩頸與上背壓力點，安排更集中式的舒壓節奏。",
+        cta: "預約我的肩頸舒壓療癒"
+      },
+      B: {
+        name: "循環低溫型",
+        temp: "35.8°C",
+        type: "偏低溫",
+        summary: "妳比較需要讓身體暖起來。現在的能量還沒被啟動，容易怕冷、循環慢、精神提不起來。",
+        signals: ["手腳冰冷", "循環偏慢", "能量偏低"],
+        course: "溫熱循環能量課程",
+        products: "溫熱型身體油、循環按摩霜、足浴／泡澡產品。",
+        care: "睡前用溫水泡腳 10 分鐘，保養時加強腹部或腳底，讓身體慢慢回溫。",
+        consult: "可以請美容師評估腹部、腿部與末梢循環，搭配溫熱型課程安排。",
+        cta: "預約我的溫熱循環療癒"
+      },
+      C: {
+        name: "水腫沉重型",
+        temp: "36.2°C",
+        type: "悶濕型",
+        summary: "妳的身體像有點卡住了。下半身沉重、線條感變弱，也容易覺得懶懶的。",
+        signals: ["下半身沉重", "水腫感", "身體悶悶的"],
+        course: "輕盈代謝淋巴課程",
+        products: "緊緻按摩霜、身體代謝精華、腿部舒緩凝膠。",
+        care: "今天多補一杯水，睡前抬腿 8 分鐘，腿部保養由下往上輕推。",
+        consult: "可以和美容師討論下半身循環、外食後水腫與代謝照護重點。",
+        cta: "預約我的輕盈代謝療癒"
+      },
+      D: {
+        name: "睡眠耗能型",
+        temp: "37.2°C",
+        type: "耗能型",
+        summary: "妳很想休息，但神經系統還沒有真正關機。睡了也不一定恢復，需要先把身體帶回放鬆狀態。",
+        signals: ["淺眠", "醒來仍累", "很難真正放鬆"],
+        course: "好眠舒壓療癒課程",
+        products: "睡眠香氛、舒眠精油、放鬆型身體乳。",
+        care: "睡前 30 分鐘降低螢幕亮度，用香氛或身體乳建立固定的放鬆儀式。",
+        consult: "可以請美容師加強頭肩頸與背部放鬆，讓身體先準備好休息。",
+        cta: "預約我的好眠療癒"
+      },
+      E: {
+        name: "情緒疲憊型",
+        temp: "36.8°C",
+        type: "心累型",
+        summary: "妳心裡太久沒有被好好照顧。現在需要的不只是休息，也是被安撫、被接住，留一點時間給自己。",
+        signals: ["想被照顧", "心情疲憊", "需要充電"],
+        course: "幸福充電療癒課程",
+        products: "幸福香氛、情緒舒緩精油、儀式感身體乳。",
+        care: "今天留 10 分鐘只做一件讓自己舒服的事，保養時把速度放慢一點。",
+        consult: "可以和美容師分享最近壓力來源，選擇香氛療癒與身心安撫感更強的服務。",
+        cta: "預約我的幸福充電療癒"
+      }
+    };
+
+    const state = {
+      index: 0,
+      answers: Array(questions.length).fill(null)
+    };
+
+    const questionCard = document.getElementById("questionCard");
+    const questionTitle = document.getElementById("questionTitle");
+    const optionsEl = document.getElementById("options");
+    const progressLabel = document.getElementById("progressLabel");
+    const progressBar = document.getElementById("progressBar");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const resultCard = document.getElementById("resultCard");
+    const quizActions = document.getElementById("quizActions");
+    const progressWrap = document.getElementById("progressWrap");
+    const helperText = document.getElementById("helperText");
+    const panelTitle = document.getElementById("panelTitle");
+
+    function renderQuestion() {
+      const current = questions[state.index];
+      questionTitle.textContent = current.title;
+      optionsEl.innerHTML = "";
+      progressLabel.textContent = `第 ${state.index + 1} / ${questions.length} 題`;
+      progressBar.style.width = `${((state.index + 1) / questions.length) * 100}%`;
+      prevBtn.disabled = state.index === 0;
+      nextBtn.textContent = state.index === questions.length - 1 ? "看我的結果 →" : "下一題 →";
+      nextBtn.disabled = !state.answers[state.index];
+
+      Object.entries(current.options).forEach(([key, label]) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `option${state.answers[state.index] === key ? " is-selected" : ""}`;
+        button.setAttribute("aria-pressed", state.answers[state.index] === key ? "true" : "false");
+        button.innerHTML = `<span class="letter">${key}</span><span>${label}</span>`;
+        button.addEventListener("click", () => {
+          state.answers[state.index] = key;
+          renderQuestion();
+        });
+        optionsEl.appendChild(button);
+      });
+    }
+
+    function getResultKey() {
+      const counts = { A: 0, B: 0, C: 0, D: 0, E: 0 };
+      state.answers.forEach(answer => counts[answer] += 1);
+      const highest = Math.max(...Object.values(counts));
+      const tied = Object.keys(counts).filter(key => counts[key] === highest);
+      return tied.length > 1 ? state.answers[2] : tied[0];
+    }
+
+    function showResult() {
+      const key = getResultKey();
+      const result = results[key];
+      panelTitle.textContent = "妳的專屬療癒結果";
+      questionCard.classList.add("hidden");
+      quizActions.classList.add("hidden");
+      progressWrap.classList.add("hidden");
+      helperText.classList.add("hidden");
+      resultCard.classList.add("is-visible");
+
+      document.getElementById("resultType").textContent = `${result.type}｜${result.name}`;
+      document.getElementById("resultTitle").textContent = result.name;
+      document.getElementById("temperature").textContent = result.temp;
+      document.getElementById("summary").textContent = result.summary;
+      document.getElementById("course").textContent = result.course;
+      document.getElementById("products").textContent = result.products;
+      document.getElementById("care").textContent = result.care;
+      document.getElementById("consult").textContent = result.consult;
+      document.getElementById("reserveBtn").textContent = result.cta;
+      document.getElementById("signals").innerHTML = result.signals.map(signal => `<li>${signal}</li>`).join("");
+    }
+
+    function restart() {
+      state.index = 0;
+      state.answers = Array(questions.length).fill(null);
+      panelTitle.textContent = "妳的身體，現在幾度？";
+      questionCard.classList.remove("hidden");
+      quizActions.classList.remove("hidden");
+      progressWrap.classList.remove("hidden");
+      helperText.classList.remove("hidden");
+      resultCard.classList.remove("is-visible");
+      renderQuestion();
+    }
+
+    prevBtn.addEventListener("click", () => {
+      if (state.index > 0) {
+        state.index -= 1;
+        renderQuestion();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (!state.answers[state.index]) return;
+      if (state.index < questions.length - 1) {
+        state.index += 1;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    document.getElementById("restartBtn").addEventListener("click", restart);
+
+    document.getElementById("reserveBtn").addEventListener("click", event => {
+      event.preventDefault();
+      alert("可串接 LINE 諮詢、門店預約表單或指定活動頁。");
+    });
+
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+      const result = results[getResultKey()];
+      const text = `我的 VIVISPA 身心溫度是 ${result.name} ${result.temp}。${result.cta}`;
+      if (navigator.share) {
+        await navigator.share({ title: "VIVISPA 身心溫度計", text, url: location.href });
+      } else {
+        await navigator.clipboard.writeText(`${text}\n${location.href}`);
+        alert("結果文字已複製，可以貼到 LINE 分享。");
+      }
+    });
+
+    renderQuestion();
+  </script>
+</body>
+</html>
